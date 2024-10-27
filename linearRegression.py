@@ -1,6 +1,3 @@
-import math 
-import scipy
-import numpy as np 
 import pandas as pd 
 
 def SinglegradientDescent(x,y):
@@ -17,30 +14,41 @@ def SinglegradientDescent(x,y):
     print(w)
     print(b)
 
-
-def MultipleGradientDescent(df,target):
+##for multiple features
+def MultipleGradientDescent(df,target,lr,iters):
     m,n = df.shape
     w = [0]*n
     x = df.drop(columns=[target])
     y = df[target]   
-    lr = 0.0001
-    iters = 100
     b = 0 
     for i in range(iters): 
         for j in range(m):
             for k in range(x.shape[1]):
-                w[k] = w[k] + (lr/m)*(y.iloc[j] - w[k]*x.iloc[j, k] - b) * x.iloc[j, k]
-            b = b + (lr / m) * (y.iloc[j] - sum(w[k] * x.iloc[j, k] for k in range(x.shape[1])) - b)
+                w[k] = w[k] + (lr/m)*(y.iloc[j] - w[k]*x.iloc[j, k] - b) * x.iloc[j, k] ##update equation of w
+            b = b + (lr / m) * (y.iloc[j] - sum(w[k] * x.iloc[j, k] for k in range(x.shape[1])) - b) ##update equation of b 
     
     print(f"weights: {w}")
     print(f'bias: {b}')
+
+    return w,b,x,y
+
+
+def linear_regressor(w,b,x,y):
+    y_preds = []
+    for i in range(len(y)):
+        prediction = sum(w[j] * x.iloc[i, j] for j in range(x.shape[1])) + b
+        y_preds.append(prediction)
+    return y_preds
 
 data = {
     'name': [3, 433, 53],
     'age': [24, 25, 23],
     'score': [85, 88, 90]
 }
+df = pd.DataFrame(data)
 
-small_df = pd.DataFrame(data)
+w,b,x,y = MultipleGradientDescent(df,target='age',lr=0.0001,iters=50)
+print("_____________________________________")
+print("Predicted values: ")
+print(list(linear_regressor(w,b,x,y)))
 
-MultipleGradientDescent(small_df,'age')
