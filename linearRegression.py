@@ -23,14 +23,14 @@ def MultipleGradientDescent(df,target):
     w = [0]*n
     x = df.drop(columns=[target])
     y = df[target]   
-    lr = 0.01
-    iters = 1000
+    lr = 0.0001
+    iters = 100
     b = 0 
     for i in range(iters): 
         for j in range(m):
-            for k in range(n):
-                w[k] = w[k] + (lr/m)*(y.iloc[j] - w[k]*x.loc[j, x.columns[k]] - b) * x.loc[j, x.columns[k]]
-                b = b + (lr/n)*(y[j] - w[k]*x.loc[j, x.columns[k]] - b)
+            for k in range(x.shape[1]):
+                w[k] = w[k] + (lr/m)*(y.iloc[j] - w[k]*x.iloc[j, k] - b) * x.iloc[j, k]
+            b = b + (lr / m) * (y.iloc[j] - sum(w[k] * x.iloc[j, k] for k in range(x.shape[1])) - b)
     
     print(f"weights: {w}")
     print(f'bias: {b}')
