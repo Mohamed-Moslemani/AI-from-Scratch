@@ -9,8 +9,9 @@ def sigmoid(w, x, b):
     return 1 / (1 + np.exp(-(np.dot(x, w) + b)))
 
 def logloss(real_vls, preds):
+    epsilon = 1e-15
+    y_pred = np.clip(preds, epsilon, 1 - epsilon)
     y_real = np.array(real_vls)
-    y_pred = np.array(preds)
     m = len(y_real)
     loss = -np.sum(y_real * np.log(y_pred) + (1 - y_real) * np.log(1 - y_pred)) / m
     return loss
