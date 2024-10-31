@@ -34,12 +34,27 @@ def logistic_gradient(df, target, iters=100, lr=0.001):
     
     return w, b
 
-# Example DataFrame
-df = {
-    'age': [23, 235, 21],
-    'height': [42, 21, 77],
-    'weight': [42, 11, 53]
-}
 
-df = pd.DataFrame(df)
-print(logistic_gradient(df, 'age'))
+def logistic_regressor(x, w, b):
+    y_preds = []
+    for i in range(len(x)):
+        y_pred = sigmoid(w, x[i], b)
+        if y_pred > 0.5: 
+            y_preds.append(1)
+        else:
+            y_preds.append(0)
+    
+    return y_preds
+
+df = pd.DataFrame({
+    'height': [42, 21, 77, 65],
+    'weight': [42, 11, 53, 50],
+    'target': [0, 1, 1, 0] 
+})
+
+x = df.drop(columns=['target'])
+y = df['target']
+w, b = logistic_gradient(df, 'target')
+
+print("Model parameters: ", w, b)
+print("Predictions: ", logistic_regressor(x.values, w, b))
