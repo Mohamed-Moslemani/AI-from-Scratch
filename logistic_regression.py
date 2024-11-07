@@ -1,60 +1,42 @@
-import math 
 import numpy as np 
 import pandas as pd 
+import math 
 
-def sigmoid(w, x, b):
-    w = np.array(w)
-    x = np.array(x)
+
+def sigmoid(x,w,b):
+
+    return 1/(1+np.exp(-(np.dot(w,x)+b)))
+
+def logisticGradient(df,iters,learning_rate,target):
+
+    m,n = df.shape
+    x = df.drop(columns=[target]).values
+    y= df[target].values
+    w = np.zeros(n-1)
+    b= 0 
     
-    return 1 / (1 + np.exp(-(np.dot(x, w) + b)))
+    for i in range(iters):
+        y_pred = sigmoid(w,x,b)
+        dw = np.zeros(n-1)
+        db = 0 
 
-def logloss(real_vls, preds):
-    epsilon = 1e-15
-    y_pred = np.clip(preds, epsilon, 1 - epsilon)
-    y_real = np.array(real_vls)
-    m = len(y_real)
-    loss = -np.sum(y_real * np.log(y_pred) + (1 - y_real) * np.log(1 - y_pred)) / m
-    return loss
-
-def logistic_gradient(df, target, iters=100, lr=0.001):
-    nrows, ncols = df.shape
-    x = df.drop(columns=target).values
-    y = df[target].values
-    w = np.zeros(ncols - 1)
-    b = 0
-    log_loss_arr = []
-
-    for i in range(iters): 
-        y_preds = sigmoid(w, x, b)
-        log_loss = logloss(y, y_preds)
-        log_loss_arr.append(log_loss)
-        for j in range(ncols - 1):
-            w[j] -= lr * np.sum((y_preds - y) * x[:, j])
-        b -= lr * np.sum(y_preds - y)
+        for j in range(n-1):
+            dw = sum([y_pred - y]*x[:,j])
+        db = sum([y_pred-y])
     
-    return w, b
+        b-= learning_rate*db 
+        w -= learning_rate*dw 
 
+    return w,b 
 
-def logistic_regressor(x, w, b):
-    y_preds = []
-    for i in range(len(x)):
-        y_pred = sigmoid(w, x[i], b)
-        if y_pred > 0.5: 
-            y_preds.append(1)
-        else:
-            y_preds.append(0)
+def logisticClassifier(x,w,b):
+    preds = []
+    if sigmoid(x,w,b) < 0.5: 
+        preds.append(0)
+    else:
+        preds.append(1)
     
-    return y_preds
+    return preds
 
-df = pd.DataFrame({
-    'height': [42, 21, 77, 65],
-    'weight': [42, 11, 53, 50],
-    'target': [0, 1, 1, 0] 
-})
 
-x = df.drop(columns=['target'])
-y = df['target']
-w, b = logistic_gradient(df, 'target')
-
-print("Model parameters: ", w, b)
-print("Predictions: ", logistic_regressor(x.values, w, b))
+    
