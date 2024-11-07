@@ -29,12 +29,14 @@ def logisticGradient(df,iters,learning_rate,target):
 
     return w,b 
 
-def logisticClassifier(x,w,b):
+def logisticClassifier(x, w, b):
     preds = []
-    if sigmoid(x,w,b) < 0.5: 
-        preds.append(0)
-    else:
-        preds.append(1)
+    for sample in x:
+        prob = sigmoid(sample, w, b)
+        if prob < 0.5:
+            preds.append(0)
+        else:
+            preds.append(1)
     
     return preds
 
