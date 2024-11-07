@@ -21,8 +21,8 @@ def logisticGradient(df,iters,learning_rate,target):
         db = 0 
 
         for j in range(n-1):
-            dw = sum([y_pred - y]*x[:,j])
-        db = sum([y_pred-y])
+            dw[j] = (1/m)*sum((y_pred - y)*x[:,j])
+        db = (1/m)*sum(y_pred-y)
     
         b-= learning_rate*db 
         w -= learning_rate*dw 
